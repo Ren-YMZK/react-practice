@@ -8,7 +8,8 @@ function App() {
   const initialURL = "https://pokeapi.co/api/v2/pokemon";
   const [loading, setLoading] = useState(true);
   const [pokemonData, setPokemonData] = useState([]);
-  const [nextUrl, setNextUrl] = useState("");
+  const [nextURL, setNextURL] = useState("");
+  const [prevURL, setPrevURL] = useState("");
 
   useEffect(() => {
     const fetchPokemonData = async () => {
@@ -16,7 +17,8 @@ function App() {
       let res = await getAllPokemon(initialURL);
       //各ポケモンの詳細なデータを取得
       loadPokemon(res.results);
-      setNextUrl(res.next);
+      setNextURL(res.next);
+      setPrevURL(res.previous);
       setLoading(false);
     };
     fetchPokemonData();
@@ -34,16 +36,24 @@ function App() {
 
   //console.log(pokemonData);
 
-  const hundleNextPage = async () => {
+  const handleNextPage = async () => {
     setLoading(true);
-    let data = await getAllPokemon(nextUrl);
+    let data = await getAllPokemon(nextURL);
     await loadPokemon(data.results);
-    setNextUrl(data.next);
+    setNextURL(data.next);
+    setPrevURL(data.previous);
     setLoading(false);
   };
 
-  const hundlePrevPage = () => {
-    
+  const handlePrevPage = async () => {
+    if (!prevURL) return;
+
+    setLoading(true);
+    let data = await getAllPokemon(prevURL);
+    await loadPokemon(data.results);
+    setNextURL(data.next);
+    setPrevURL(data.previous);
+    setLoading(false);
   };
 
 
@@ -61,8 +71,8 @@ function App() {
               })}
             </div>
             <div className='btn'>
-              <button onClick={hundlePrevPage}>前へ</button>
-              <button onClick={hundleNextPage}>次へ</button>
+              <button onClick={handlePrevPage}>前へ</button>
+              <button onClick={handleNextPage}>次へ</button>
             </div>
         </>}
       </div>
