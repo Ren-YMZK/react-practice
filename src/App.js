@@ -38,6 +38,7 @@ function App() {
     setLoading(true);
     let data = await getAllPokemon(nextUrl);
     await loadPokemon(data.results);
+    setNextUrl(data.next);
     setLoading(false);
   };
 
